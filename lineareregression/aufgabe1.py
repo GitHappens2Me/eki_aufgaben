@@ -21,6 +21,28 @@ from matplotlib import pyplot as plt
 # Verwenden Sie die Funktionen np.ones_like und np.stack um die aus der Vorlesung bekannte
 # X-Matrix für das gegebenen Modell aufzustellen.
 
+# Gemessene Werte
+
+# x_data = np.array([1, 2, 3, 4])
+# y_data = np.array([3, 4, 4, 2])
+
+x_data = np.array([1, 2, 3, 4, 5, 6])
+y_data = np.array([3, 4, 4, 2, 2, 1])
+
+# geschätzte Funktion abhängig von x & w
+def fun(x, w):
+    return w[0] + w[1]*x + w[2]*x*x + w[3]*x*x*x 
+
+# Create THE X-Matrix
+ones_column = np.ones_like(x_data)       # Spalte mit Einsen für w0
+x_column = x_data                        # Spalte für w1 * x
+x_squared_column = x_data**2             # Spalte für w2 * x^2
+x_cubed_column = x_data**3               # Spalte für w3 * x^3
+
+# X-Matrix durch Stacken der Spalten
+X = np.stack((ones_column, x_column, x_squared_column, x_cubed_column), axis=1)
+
+print(X)
 
 
 # Aufgabe 1b
@@ -29,9 +51,25 @@ from matplotlib import pyplot as plt
 # Geben Sie diese auf der Konsole aus. Berechnen Sie ebenfalls
 # den summarischen quadratischen Fehler ihrer Vorhersage und geben Sie auch diese auf der Konsole aus.
 
+# Pseudo-Inverse Berechnen
+inv = np.linalg.inv(X.T @ X) @ X.T
+
+# Omega berechnen
+w = inv @ y_data
+print(w)
+
+
+
+
 # Aufgabe 1c
 ############
 # Plotten Sie die Meßreihe sowie das geschätzte Modell 
+
+lin_x = np.linspace(0,10, 100)
+plt.plot(lin_x, fun(lin_x,w), label="Pred.")
+
+plt.plot(x_data, fun(x_data,w), label="Data", linestyle="",marker="o")
+
 
 
 # Aufgabe 1d
@@ -39,4 +77,5 @@ from matplotlib import pyplot as plt
 # Was verändert sich wenn Sie ihrer Meßreihe weitere Koordinaten hinzufügen, z.B den
 # Punkt (5,2)?
 
-
+plt.legend()
+plt.show()

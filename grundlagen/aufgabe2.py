@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib import pyplot as plt
+
 
 ## Aufgabe 2a
 #############
@@ -23,7 +25,19 @@ import numpy as np
 # ist.
 
 
+#  f(x,y,z) = (x-3)^2 + (y-2)^2 + (z+5)^2
+def f(x,y,z):
+    return (x-3)**2 + (y-2)**2 + (z+5)**2
 
+
+def f_grad(x,y,z):
+    return  np.array( 
+            [2*(x-3),
+            2*(y-2), 
+            2*(z+5)])
+
+print(f(3,2,-5), f_grad(3,2,-5))
+print(f(0,0,0), f_grad(0,0,0))
 
 ## Aufgabe 2b:
 ##############
@@ -37,3 +51,35 @@ import numpy as np
 #
 # Geben Sie in jedem Schritt sowohl die Koordinate x_n aus sowie den 
 # Gradienten an der Stelle.
+
+Step_n = 100
+
+x_0 = np.array([12, -5, 9])
+x_n = np.array([12, -5, 9])
+
+x_array = []
+y_array = []
+z_array = []
+
+# Start Gradient Descend
+eta = 0.03
+for i in range(Step_n):
+    grad = f_grad(x_n[0], x_n[1], x_n[2])
+    x_n = x_n - eta * grad
+    print("Step",i,": Koordinaten:", x_n, " Gradient:", grad)
+    x_array.append(x_n[0])
+    y_array.append(x_n[1])
+    z_array.append(x_n[2])
+    
+
+# Show Convergence to optimal Values
+
+lin_x = np.linspace(0 ,Step_n, Step_n)
+plt.plot(lin_x, x_array, label="X")
+plt.plot(lin_x, y_array, label="Y")
+plt.plot(lin_x, z_array, label="Z")
+ 
+
+
+plt.legend()
+plt.show()

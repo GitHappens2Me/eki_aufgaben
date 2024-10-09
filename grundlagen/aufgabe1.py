@@ -1,7 +1,14 @@
+# Activate venv mit: 
+# .\myvenv\Scripts\activate
+# 
+
 import numpy as np
 from matplotlib import pyplot as plt
 
-# Aufgabe 1a
+
+print(np.__version__)
+
+# Aufgabe 1
 ############
 
 # Erzeugen Sie mit np.linspace ein NumPy Array mit 100 Werten zwischen 0 und 15
@@ -13,7 +20,22 @@ from matplotlib import pyplot as plt
 #
 # Plotten Sie f(x) und f'(x) mit plt.plot(...) und plt.show(...)
 
-# Create a linear space between 0 and 5
+
+def f(x): return np.exp(np.sin(values))
+def df_dx(x): return np.exp(np.sin(values)) * np.cos(values)
+
+values = np.linspace(0, 15, 100)
+print(values)
+#plt.plot(values)
+
+f_values = f(values)
+print(f_values)
+plt.plot(f_values, label='f')
+
+dfdx_values = df_dx(values)
+print(dfdx_values)
+plt.plot(dfdx_values, label="f'")
+
 
 
 
@@ -29,3 +51,23 @@ from matplotlib import pyplot as plt
 # ihre numerische Approximation ins gleiche Koordinatensystem
 
 # Approximate derivative numerically
+
+
+x = values
+y = f(values)
+                                            # y        [ 1, 2, 3, 4, 5, 6,]
+n = (y[1:] - y[:-1]) / (x[1:] - x[:-1])    #  y[1:]:   [ 2, 3, 4, 5, 6, ]
+                                           #  y[:-1]   [ 1, 2, 3, 4, 5, ]
+
+test = [1 , 2 , 3,4, 5,6]
+
+print(len(x[1:]))
+print(len(n))
+
+plt.plot( n, label="f' (Aprox)")
+
+
+plt.axhline()
+
+plt.legend()
+plt.show()
