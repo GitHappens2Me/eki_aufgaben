@@ -26,8 +26,8 @@ from matplotlib import pyplot as plt
 # x_data = np.array([1, 2, 3, 4])
 # y_data = np.array([3, 4, 4, 2])
 
-x_data = np.array([1, 2, 3, 4, 5, 6])
-y_data = np.array([3, 4, 4, 2, 2, 1])
+x_data = np.array([1, 2, 3, 4, 5, 6, 7, ])
+y_data = np.array([3, 4, 4, 2, 12,6, 1])
 
 # geschätzte Funktion abhängig von x & w
 def fun(x, w):
@@ -68,7 +68,7 @@ print(w)
 lin_x = np.linspace(0,10, 100)
 plt.plot(lin_x, fun(lin_x,w), label="Pred.")
 
-plt.plot(x_data, fun(x_data,w), label="Data", linestyle="",marker="o")
+plt.plot(x_data, y_data, label="Data", linestyle="",marker="o")
 
 
 

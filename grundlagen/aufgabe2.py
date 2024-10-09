@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 #
 # Hinweis: Sie können ihre Funktionen mit bekannten Werten testen, so ist z.B.
 #
-#   f(3,2,-5) = grad_f(3,2,-5) = (0,0,0)
+#   f(3,2,-5) = 0; grad_f(3,2,-5) = (0,0,0)
 #   
 # und
 #
@@ -62,7 +62,7 @@ y_array = []
 z_array = []
 
 # Start Gradient Descend
-eta = 0.03
+eta = 0.05
 for i in range(Step_n):
     grad = f_grad(x_n[0], x_n[1], x_n[2])
     x_n = x_n - eta * grad
