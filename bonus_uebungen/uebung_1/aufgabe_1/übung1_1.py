@@ -24,7 +24,7 @@ print(f"Die berechneten Paramter werte sind:{W}\n")
 
 
 # Visualisierung der Trennebene und der Datenpunkte
-x1_mesh, x2_mesh = np.meshgrid(np.linspace(-5,10,50), np.linspace(-5,10,50))
+x1_mesh, x2_mesh = np.meshgrid(np.linspace(-8,10,50), np.linspace(-8,10,50))
 z = W[0] + W[1] * x1_mesh + W[2] * x1_mesh * x1_mesh + W[3] * x2_mesh
 z = np.clip(z, -1, 1)
 
@@ -33,7 +33,7 @@ plt.contour(x1_mesh, x2_mesh, z, levels=[0.0], colors=["k"])
 plt.plot(x1[(Y < 0.0)], x2[(Y < 0.0)], 'bs')  # Blaue Vierecke
 plt.plot(x1[(Y > 0.0)], x2[(Y > 0.0)], 'r^')  # Rote Dreiecke
 plt.xlim((-5,10))
-plt.ylim((-5,10))
+plt.ylim((-8,10))
 plt.xlabel('x1')
 plt.ylabel('x2')
 plt.title('Lineare Klassifikation')
