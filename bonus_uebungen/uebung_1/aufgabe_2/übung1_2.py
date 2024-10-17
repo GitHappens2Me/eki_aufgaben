@@ -39,7 +39,7 @@ def model_2(W, Z, AB, S):
 # Modellvorhersagen für alle Kunden berechnen:
 print("\nTeilaufgabe 1) Modellvorhersagen für alle Kunden berechnen:")
 for kunde in range(N_kunden):
-    print(f"Kunde {kunde}: Zucker: {Zucker[kunde]}, AciBiber: {AciBiber[kunde]}, Salz: {Salz[kunde]}, Ergebnis: {Lecker[kunde]}, Vorhersage: {round(model(kunde, W), 2)} , Vorhersage der Klasse: {round(p_lecker(kunde, W), 3)}")
+    print(f"Kunde {kunde}: Zucker: {Zucker[kunde]}, AciBiber: {AciBiber[kunde]}, Salz: {Salz[kunde]}, Ergebnis: {Lecker[kunde]}, Vorhersage: {round(model(kunde, W), 2)}, Vorhersage der Klasse: {round(p_lecker(kunde, W), 3)}")
 
 # Teilaufgabe 2)
 # Likelihood berechnen:
@@ -120,20 +120,32 @@ print("\n---------------------Ende der Aufgaben------------------------\n")
 # Visualisierung (Verhältnis zwischen Zucker und AciBiber für Leckere Soßen (Ohne Salz) )
 
 steps = 5000
-print("Visualisierung (Verhältnis zwischen Zucker und AciBiber für Leckere Soßen (Ohne Salz) )")
 print(f"Start-Omega: {W}")
 x = np.array([step for step in range(steps)])
 y = []
-W = gradient_descend(n = steps, W = W, lern_rate= 0.01, log = y, visualisierung=False)
+
+
+print("\n---------------------Info-------------------------")
+print("-------------Falls Sie die Visualisierung --------")
+print("-------------von Zucker/AciBiber über das --------")
+print("-------------Grad.Abst.Verf. sehen wollen,--------")
+print("-------------setzen sie in der Funktion   --------")
+print("-------------gradient_descend (Zeile ↓)   --------")
+print("-------------'visualisierung = True'      --------")
+print("-------------Ansonsten sehen Sie die      --------")
+print("-------------Likelihood pro Step          --------")
+print("---------------------Info-------------------------\n")
+W = gradient_descend(n = steps, W = W, lern_rate= 0.01, log = y, visualisierung=False)   # ← hier
+
+
+
 print(f"Finales Omega: {W} (nach {steps} Steps)")
-plt.plot(x,y)
-plt.show()
 
 
 # Vorhersage nach Gradient Descend
 for kunde in range(N_kunden):
-    print(f"Kunde {kunde}: Zucker: {Zucker[kunde]}, AciBiber: {AciBiber[kunde]}, Salz: {Salz[kunde]}, Ergebnis: {Lecker[kunde]}, Vorhersage: {round(model(kunde, W), 2)} , Vorhersage der Klassenzugehörigkeitswahrscheinlichkeit in %: {round(p_lecker(kunde, W), 3)* 100}%")
+    print(f"Kunde {kunde}: Zucker: {Zucker[kunde]}, AciBiber: {AciBiber[kunde]}, Salz: {Salz[kunde]}, Ergebnis: {Lecker[kunde]}, Vorhersage: {round(model(kunde, W), 2)}, Vorhersage der Klassenzugehörigkeitswahrscheinlichkeit in %: {round(p_lecker(kunde, W), 3)* 100}%")
 
 
-
-
+plt.plot(x,y)
+plt.show()
