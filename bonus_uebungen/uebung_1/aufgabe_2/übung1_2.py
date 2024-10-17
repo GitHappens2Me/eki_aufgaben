@@ -92,7 +92,7 @@ def gradient_descend(n, W, lern_rate, log = [], visualisierung = False):
 
 
 print("\nTeilaufgabe 4) Gradientenaufstieg (1 Step mit Lernrate 0.1):")
-print(f"Parameter nach einem Gradientenaufstieg: {gradient_descend(1, W, lern_rate= 0.01)}")
+print(f"Parameter nach einem Gradientenaufstieg: {gradient_descend(1, W, lern_rate= 0.1)}")
 
 # Teilaufgabe 5)
 # Klassenzugehörigkeitswahrscheinlichkeiten & Likelihood für alternative Parameter
