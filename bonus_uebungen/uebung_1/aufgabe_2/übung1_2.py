@@ -23,9 +23,17 @@ def p_lecker(kunde, W):
         sigmoid(model(kunde, W))
     )
 
+def p_lecker_2(W, Z, AB, S):
+    return (
+        sigmoid(model_2(W, Z, AB, S))
+    )
+
 # Model: Berechnet die Modellvorhersage. 
 def model(kunde, W):
     return W[0] * Zucker[kunde] + W[1] * AciBiber[kunde] + W[2] * Salz[kunde] + W[3]
+
+def model_2(W, Z, AB, S):
+    return W[0] * Z + W[1] * AB + W[2] * S + W[3]
     
 # Teilaufgabe 1)
 # Modellvorhersagen für alle Kunden berechnen:
@@ -51,8 +59,8 @@ def grad(W):
     return np.array([
         #korrekte indizes bei Zucker, A.b. & Salz? 
         sum([(Lecker[i] - p_lecker(i, W)) * Zucker[i] for i  in range(N_kunden)]),
-        sum([(Lecker[i] - p_lecker(i, W)) * AciBiber[1] for i  in range(N_kunden)]),
-        sum([(Lecker[i] - p_lecker(i, W)) * Salz[2] for i  in range(N_kunden)]),
+        sum([(Lecker[i] - p_lecker(i, W)) * AciBiber[i] for i  in range(N_kunden)]),
+        sum([(Lecker[i] - p_lecker(i, W)) * Salz[i] for i  in range(N_kunden)]),
         sum([(Lecker[i] - p_lecker(i, W)) * 1 for i  in range(N_kunden)])
     ])
 print("\nTeilaufgabe 3) Gradient berechnen:")
@@ -72,8 +80,10 @@ def gradient_descend(n, W, lern_rate, log = [], visualisierung = False):
             plt.contour(zucker, aciBiber, z, levels=[0.0], colors=["k"])
             plt.xlabel('Zucker')
             plt.ylabel('AciBiber')
-            plt.pause(0.1)
+            plt.title("Zusätzliche Visualisierung \n(Verhältnis zwischen Zucker und AciBiber für Leckere Soßen (Ohne Salz))\nVerändert durch Gradient Descend")
 
+            plt.pause(0.05)
+           
         log.append(likelihood(W))
 
         # Anpassen der Parameter
@@ -86,47 +96,44 @@ print(f"Parameter nach einem Gradientenaufstieg: {gradient_descend(1, W, lern_ra
 
 # Teilaufgabe 5)
 # Klassenzugehörigkeitswahrscheinlichkeiten & Likelihood für alternative Parameter
+W_alt = [1.145, -0.066, -0.093, -3.991]
 print("\nTeilaufgabe 5) Klassenzugehörigkeitswahrscheinlichkeiten & Likelihood für alternative Parameter:")
 for kunde in range(N_kunden):
-    print(f"Kunde {kunde}: Vorhersage der Klasse: {round(p_lecker(kunde, [1.145, -0.066, -0.093, -3.991]), 3)}")
-print(f"Likelihood: {likelihood(W)}")
-print("\n")
+    print(f"Kunde {kunde}: Vorhersage der Klasse: {round(p_lecker(kunde, W_alt), 3)}")
+print(f"Likelihood: {likelihood(W_alt)}")
 
 # Teilaufgabe 6)
 # Wieviel Zucker ist notwendig bei 3.4g Aci Biber und 3.8g Salz
+def benötigter_Zucker(W, Acibiber, Salz):
+    return (W[1] * Acibiber + W[2] * Salz + W[3]) / -W[0]
+print("\nTeilaufgabe 6) Wieviel Zucker ist notwendig bei 3.4g Aci Biber und 3.8g Salz:")
+AB = 3.4
+salz = 3.8
+print(f"Benötigter Zucker: {benötigter_Zucker(W_alt, AB, 3.8)}")
+print(f"Überprüfen mit {round(benötigter_Zucker(W_alt, AB, 3.8),5)} Zucker, {AB} AciBiber & {salz} Salz: {p_lecker_2(W_alt, benötigter_Zucker(W_alt, AB, salz), AB, salz)}")
 
 # Teilaufgabe 7) 
 # Methodik hinterfragen
 
+print("\n---------------------Ende der Aufgaben------------------------\n")
 
-
-
+# Visualisierung (Verhältnis zwischen Zucker und AciBiber für Leckere Soßen (Ohne Salz) )
 
 steps = 5000
-
-# Für Übung: n = 1
-# Frage: Warum bleibt Kunde 0 schlecht vorhergesagt?
-print(f"Omega: {W}")
-
+print("Visualisierung (Verhältnis zwischen Zucker und AciBiber für Leckere Soßen (Ohne Salz) )")
+print(f"Start-Omega: {W}")
 x = np.array([step for step in range(steps)])
 y = []
+W = gradient_descend(n = steps, W = W, lern_rate= 0.01, log = y, visualisierung=False)
+print(f"Finales Omega: {W} (nach {steps} Steps)")
+plt.plot(x,y)
+plt.show()
 
 
-
-W = gradient_descend(n = steps, W = W, lern_rate= 0.01, log = y)
-print(f"Omega: {W}")
-
-#plt.plot(x, y)
-#plt.grid()
-
-
-
-
+# Vorhersage nach Gradient Descend
 for kunde in range(N_kunden):
     print(f"Kunde {kunde}: Zucker: {Zucker[kunde]}, AciBiber: {AciBiber[kunde]}, Salz: {Salz[kunde]}, Ergebnis: {Lecker[kunde]}, Vorhersage: {round(model(kunde, W), 2)} , Vorhersage der Klassenzugehörigkeitswahrscheinlichkeit in %: {round(p_lecker(kunde, W), 3)* 100}%")
 
-
-plt.show()
 
 
 
