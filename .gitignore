@@ -2,5 +2,6 @@
 *.png
 *.jpg
 *.ggb
+*.pyc
 *.jpeg
 *.zip

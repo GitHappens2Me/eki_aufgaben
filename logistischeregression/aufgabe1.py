@@ -5,11 +5,12 @@ from aufgabe1_misc import zeichnen
 # Einleitung
 # #########
 # Gegeben sind nun diese Daten
+
 coords_x1 = np.random.normal(0, 0.5, 100) 
 coords_x2 = np.random.normal(0, 0.5, 100)
 dx, dy = np.random.uniform(-0.4, 0.4, 2)
 class_y = (((coords_x1-dx)**2 + (coords_x2-dy)**2) < 0.4)
-
+sample_size = len(coords_x1)
 # Ausserdem wurde bereits mit Hilfe der linearen Regression ein Modell der Form
 #
 #   y = w0 + w1*x1 + w2*x2 + w3*x1^2 + w4*x2^2 + w5*x1*x2 (Gl. 1)
@@ -17,13 +18,13 @@ class_y = (((coords_x1-dx)**2 + (coords_x2-dy)**2) < 0.4)
 # geschätzt.
 X = np.stack([np.ones_like(coords_x1), coords_x1, coords_x2, coords_x1**2, coords_x2**2, coords_x1 * coords_x2], axis=1)
 Xinv = np.linalg.inv(X.T @ X) @ X.T
-model = Xinv @ (2.0*class_y-1.0)
+W = Xinv @ (2.0*class_y-1.0)
 
-model += np.random.uniform(-0.5, 0.5, model.shape)
+W += np.random.uniform(-0.5, 0.5, W.shape)
 
 # Der folgende Code zeichnet das Model (vergleiche Aufgabe 3 bei der linearen Regression)
-print(model)
-zeichnen(model, coords_x1, coords_x2, class_y)
+print(W)
+zeichnen(W, coords_x1, coords_x2, class_y)
 plt.pause(2)
 
 
@@ -43,6 +44,28 @@ plt.pause(2)
 #   Berechnen Sie dann mit (P > 0.5) == class_y, welche Punkte ihrer korrekten Klasse zugeordnet werden.
 #   Geben Sie mit print((P>0.5) == class_y) dieses Array auf der Konsole aus. Die meisten Einträge sollten "True" sein.
 
+def model(W, x1, x2):
+    return  W[0] + W[1]*x1 + W[2]*x2 + W[3]*x1*x1 + W[4]*x2*x2 + W[5]*x1*x2 
+
+def sigmoid(x):
+    return ( 1 / (1+np.exp(-x)) )
+
+def p(W, x1, x2):
+    return (
+        sigmoid(model(W, x1, x2))
+    )
+
+def p_i(W, i):
+    return (
+        sigmoid(model(W, coords_x1[i], coords_x2[i]))
+    )
+
+print()
+print(coords_x1)
+class_preditions = [p(W, coords_x2[index], coords_x2[index]) for index in range(len(coords_x1))]
+for i, pred in enumerate(class_preditions):
+    print(f"Index: {i}: Prediction: {round(pred,2)}, Correct: {class_y[i]}")
+
 
 # Aufgabe 2
 ###########
@@ -55,7 +78,22 @@ plt.pause(2)
 #
 # Sie können np.power und np.prod verwenden um die Potenzen bzw. das Produkt zu berechnen
 
+def likelihood(W):
+    likelihood = 1
+    for i in range(len(coords_x1)):
+        likelihood *= (np.power(p(W, coords_x1[i], coords_x2[i]), class_y[i]) * np.power(1 - p(W, coords_x1[i], coords_x2[i]), 1 - class_y[i]))
+    return likelihood
+ 
 
+def likelihood_mean(W):
+    lkh = likelihood(W)
+    return np.power(lkh, 1 / sample_size) 
+
+
+
+
+
+print(likelihood(W))
 
 # Aufgabe 3
 ###########
@@ -70,6 +108,22 @@ plt.pause(2)
 # Sie können np.sum verwenden um die Summe zu berechnen
 
 
+# W[0] + W[1]*x1 + W[2]*x2 + W[3]*x1*x1 + W[4]*x2*x2 + W[5]*x1*x2 
+def grad(W):
+    x1 = coords_x1
+    x2 = coords_x2
+    return np.array([
+        #korrekte indizes bei Zucker, A.b. & Salz? 
+        sum([(class_y[i] - p_i(W,i)) * 1 for i  in range(sample_size)]),
+        sum([(class_y[i] - p_i(W,i)) * x1[i] for i  in range(sample_size)]),
+        sum([(class_y[i] - p_i(W,i)) * x2[i] for i  in range(sample_size)]),
+        sum([(class_y[i] - p_i(W,i)) * x1[i] * x1[i] for i  in range(sample_size)]),
+        sum([(class_y[i] - p_i(W,i)) * x2[i] * x2[i] for i  in range(sample_size)]),
+        sum([(class_y[i] - p_i(W,i)) * x1[i] * x2[i] for i  in range(sample_size)])
+    ])
+
+print(grad(W))
+
 
 # Aufgabe 4
 ###########
@@ -81,9 +135,41 @@ plt.pause(2)
 # Hinweis: Beachten Sie das Sie nach jedem Gradientenupdate natürlich die Modelvorhersage (Gl. 1),
 # die Klassenzugehörigkeitswahrscheinlichkeit (Gl. 2) und den Gradienten (Gl. 3) neu berechnen müssen. 
 
-# Diese Schleife iteriert über 1000 Schritte
+
+likelihood_log = []
+lernrate = 0.1
+
+def gradient_descend(n, W, lern_rate, log = [], visualisierung = True):
+    for i in range(n):
+
+        if(visualisierung and (i % 10 == 0)):
+            plt.clf()
+            x1, x2 = np.meshgrid(np.linspace(-1, 1, 500), np.linspace(-1, 1, 500))
+            z =  model(W, x1, x2)
+            plt.contourf(x1, x2, z, levels=[-1,0,1], alpha=.2, cmap="coolwarm")
+            plt.contour(x1, x2, z, levels=[0.0], colors=["k"])
+            zeichnen(W, coords_x1, coords_x2, class_y)
+            plt.xlabel('X1')
+            plt.ylabel('X2')
+            plt.title("Gradient Ascend")
+            print(f"Step {i}: Likelihood: {likelihood_mean(W)}")
+            plt.pause(0.05)
+        
+        log.append(likelihood(W))
+
+        # Anpassen der Parameter
+        W = W + lern_rate * grad(W) 
+    return W
+
+gradient_descend(1000, W,lernrate,likelihood_log)
+
+#print(likelihood_log)
+
+
+
 for iter in range(1000):
     pass
+
     # Berechnen Sie hier die neuen Klassenzugehörigkeitswahrscheinlichkeiten (Gl. 2)
     
     # Geben Sie hier die Likelihood ihres aktuellen Modells aus (Gl. 4)
