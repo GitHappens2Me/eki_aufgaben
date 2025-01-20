@@ -1,6 +1,9 @@
 import csv
 from sklearn import feature_extraction
 from sklearn import svm
+
+from sklearn.feature_extraction.text import CountVectorizer
+
 from sklearn.model_selection import train_test_split
 import numpy as np
 
@@ -14,7 +17,7 @@ import numpy as np
 ham    = []
 spam   = []
 
-with open("spam.csv", "rt") as f:
+with open("eki_aufgaben\svm\spam.csv", "rt") as f:
     reader = csv.reader(f)
     for label, text in reader:
         if label=="ham":
@@ -27,6 +30,9 @@ labels = np.concatenate([
             np.zeros(len(spam)),
             np.ones(len(ham))])
          
+
+
+
 # Aufgabe 1
 # #########
 # Wir müssen die in Text-Form vorliegenden Mails zunächst 
@@ -39,6 +45,20 @@ labels = np.concatenate([
 # zu überführen. Verwenden Sie dann die get_feature_names_out() Methode
 # um die häufigsten Wörter sowohl für SPAM- als auch HAM-Mails auf der Konsole auszugeben.
 
+spam_vectorizer = CountVectorizer(max_features=16)
+ham_vectorizer = CountVectorizer(max_features=16)
+# Fit and transform the data
+print(spam_vectorizer.fit_transform(spam))
+print(ham_vectorizer.fit_transform(ham))
+
+
+# Get feature names out
+feature_names_spam = spam_vectorizer.get_feature_names_out(spam)
+feature_names_ham  = ham_vectorizer.get_feature_names_out(ham)
+# Show feature names
+print(len(feature_names_spam), feature_names_spam)
+print(len(feature_names_ham),feature_names_ham)
+
 
 # Aufgabe 2
 # #########
@@ -50,16 +70,21 @@ labels = np.concatenate([
 # mit Hilfe des Plus-Operators aneinanderfügen, also 
 #
 #   merged = listeA + listeB
+
+merged = list(feature_names_spam) + list(feature_names_ham)
+
 #
 # Um doppelte Einträge zu entfernen können Sie diese Liste dann zunächst
 # in ein Python-Set (Menge) umwandeln und diese dann wieder zurück in eine
 # Liste umwandeln, also
 #
 #   liste = list(set(liste))
+liste = list(set(merged))
 #
 # Geben Sie diese Liste der kombinierten Wörter ebenfalls auf der Konsole aus.
 # Wieviele sind es?
 
+print(len(liste), liste)
 
 # Aufgabe 3
 # #########

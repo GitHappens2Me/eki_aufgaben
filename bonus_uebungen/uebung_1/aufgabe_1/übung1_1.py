@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Datensatz: 
 x1 = np.array([-4, -3, -2, -1, 0, 2, 4, 5, 7, 8])
 x2 = np.array([ 5,  6,  3,  2, 1,-1,-4,-5,-2,-3])
-Y  = np.array       ([-1, -1, -1, -1,-1, 1, 1, 1, 1, 1])
+Y  = np.array([-1, -1, -1, -1,-1, 1, 1, 1, 1, 1])
 
 
 # X-Matrix aufstellen 
@@ -19,6 +19,7 @@ W = np.linalg.inv(X.T @ X) @ X.T @ Y
 
 # Ausgabe der Resultate:
 print(f"Die X-Matrix hat folgene Form:\n{X}\n")
+print(f"Die Pseudoinverse ist: \n{(np.linalg.inv(X.T @ X) @ X.T).round(2)}\n")
 print(f"Die berechneten Paramter werte sind:{W}\n")
 
 

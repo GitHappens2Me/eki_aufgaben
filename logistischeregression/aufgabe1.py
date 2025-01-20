@@ -113,7 +113,7 @@ def grad(W):
     x1 = coords_x1
     x2 = coords_x2
     return np.array([
-        #korrekte indizes bei Zucker, A.b. & Salz? 
+        
         sum([(class_y[i] - p_i(W,i)) * 1 for i  in range(sample_size)]),
         sum([(class_y[i] - p_i(W,i)) * x1[i] for i  in range(sample_size)]),
         sum([(class_y[i] - p_i(W,i)) * x2[i] for i  in range(sample_size)]),
@@ -137,12 +137,12 @@ print(grad(W))
 
 
 likelihood_log = []
-lernrate = 0.1
+lernrate = 0.01
 
 def gradient_descend(n, W, lern_rate, log = [], visualisierung = True):
     for i in range(n):
 
-        if(visualisierung and (i % 10 == 0)):
+        if(visualisierung):# and (i % 10 == 0)):
             plt.clf()
             x1, x2 = np.meshgrid(np.linspace(-1, 1, 500), np.linspace(-1, 1, 500))
             z =  model(W, x1, x2)
@@ -159,10 +159,11 @@ def gradient_descend(n, W, lern_rate, log = [], visualisierung = True):
 
         # Anpassen der Parameter
         W = W + lern_rate * grad(W) 
+        
     return W
 
 gradient_descend(1000, W,lernrate,likelihood_log)
-
+plt.pause(3)
 #print(likelihood_log)
 
 
